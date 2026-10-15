@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Avery's Games</title>
+  <meta name="description" content="Avery's Games — open a logo to play.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="wrap">
+    <h1>Avery&rsquo;s Games</h1>
+    <p class="hint" id="hub-hint">Open a logo to play. Links open in a new tab.</p>
+    <ul class="grid" id="game-grid" aria-describedby="hub-hint"></ul>
+    <noscript>
+      <ul class="grid">
+        <li class="card"><a class="card-link" href="https://cyan-fox-avery.github.io/rockhound/" target="_blank" rel="noopener">Rockhound</a></li>
+        <li class="card"><a class="card-link" href="https://cyan-fox-avery.github.io/tag-along/" target="_blank" rel="noopener">Tag Along</a></li>
+      </ul>
+    </noscript>
+  </main>
+  <script src="games.js"></script>
+  <script>
+    const grid = document.getElementById('game-grid');
+    for (const game of GAMES) {
+      const item = document.createElement('li');
+      item.className = 'card' + (game.status === 'coming-soon' ? ' is-coming-soon' : '');
+
+      const visual = document.createElement('span');
+      visual.className = 'logo-wrap';
+      if (game.logo) {
+        const img = document.createElement('img');
+        img.src = game.logo;
+        img.alt = '';
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        visual.appendChild(img);
+      } else {
+        const ph = document.createElement('span');
+        ph.className = 'logo-placeholder';
+        ph.textContent = game.name;
+        visual.appendChild(ph);
+        const note = document.createElement('span');
+        note.className = 'logo-note';
+        note.textContent = 'Logo to come';
+        visual.appendChild(note);
+      }
+
+      const name = document.createElement('span');
+      name.className = 'game-name';
+      name.textContent = game.name;
+
+      if (game.status === 'coming-soon') {
+        const badge = document.createElement('span');
+        badge.className = 'badge';
+        badge.textContent = 'Coming Soon';
+        item.appendChild(visual);
+        item.appendChild(name);
+        item.appendChild(badge);
+        item.setAttribute('aria-label', game.name + ' — Coming Soon');
+      } else {
+        const link = document.createElement('a');
+        link.className = 'card-link';
+        link.href = game.url;
+        link.target = '_blank';
+        link.rel = 'noopener';
+        link.setAttribute('aria-label', 'Play ' + game.name + ' (opens in new tab)');
+        link.appendChild(visual);
+        link.appendChild(name);
+        item.appendChild(link);
+      }
+      grid.appendChild(item);
+    }
+  </script>
+</body>
+</html>
