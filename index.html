@@ -9,7 +9,13 @@
 </head>
 <body>
   <main class="wrap">
-    <h1>Avery&rsquo;s Games</h1>
+    <div class="topbar">
+      <div class="lang-toggle" role="group" aria-label="Language / Langue">
+        <button type="button" id="lang-en" class="lang-btn" lang="en" aria-pressed="true" aria-label="English">EN</button>
+        <button type="button" id="lang-fr" class="lang-btn" lang="fr" aria-pressed="false" aria-label="Français">FR</button>
+      </div>
+    </div>
+    <h1 id="hub-title">Avery&rsquo;s Games</h1>
     <p class="hint" id="hub-hint">Open a logo to play. Links open in a new tab.</p>
     <ul class="grid" id="game-grid" aria-describedby="hub-hint"></ul>
     <noscript>
@@ -21,56 +27,113 @@
   </main>
   <script src="games.js"></script>
   <script>
+    const STRINGS = {
+      en: {
+        title: "Avery's Games",
+        description: "Avery's Games — open a logo to play.",
+        hint: 'Open a logo to play. Links open in a new tab.',
+        logoToCome: 'Logo to come',
+        comingSoon: 'Coming Soon',
+        play: (name) => 'Play ' + name + ' (opens in new tab)',
+        comingSoonLabel: (name) => name + ' — Coming Soon',
+      },
+      fr: {
+        title: 'Les jeux d’Avery',
+        description: 'Les jeux d’Avery — cliquez sur un logo pour jouer.',
+        hint: 'Cliquez sur un logo pour jouer. Les liens s’ouvrent dans un nouvel onglet.',
+        logoToCome: 'Logo à venir',
+        comingSoon: 'Bientôt disponible',
+        play: (name) => 'Jouer à ' + name + ' (s’ouvre dans un nouvel onglet)',
+        comingSoonLabel: (name) => name + ' — Bientôt disponible',
+      },
+    };
+
     const grid = document.getElementById('game-grid');
-    for (const game of GAMES) {
-      const item = document.createElement('li');
-      item.className = 'card' + (game.status === 'coming-soon' ? ' is-coming-soon' : '');
+    const titleEl = document.getElementById('hub-title');
+    const hintEl = document.getElementById('hub-hint');
+    const enBtn = document.getElementById('lang-en');
+    const frBtn = document.getElementById('lang-fr');
+    const descEl = document.querySelector('meta[name="description"]');
 
-      const visual = document.createElement('span');
-      visual.className = 'logo-wrap';
-      if (game.logo) {
-        const img = document.createElement('img');
-        img.src = game.logo;
-        img.alt = '';
-        img.loading = 'lazy';
-        img.decoding = 'async';
-        visual.appendChild(img);
-      } else {
-        const ph = document.createElement('span');
-        ph.className = 'logo-placeholder';
-        ph.textContent = game.name;
-        visual.appendChild(ph);
-        const note = document.createElement('span');
-        note.className = 'logo-note';
-        note.textContent = 'Logo to come';
-        visual.appendChild(note);
+    function render(lang) {
+      const t = STRINGS[lang];
+      document.documentElement.lang = lang;
+      document.title = t.title;
+      descEl.setAttribute('content', t.description);
+      titleEl.textContent = t.title;
+      hintEl.textContent = t.hint;
+      enBtn.setAttribute('aria-pressed', lang === 'en' ? 'true' : 'false');
+      frBtn.setAttribute('aria-pressed', lang === 'fr' ? 'true' : 'false');
+
+      grid.innerHTML = '';
+      for (const game of GAMES) {
+        const displayName = (lang === 'fr' && game.name_fr) ? game.name_fr : game.name;
+        const url = lang === 'fr' ? game.url_fr : game.url;
+        const isLive = Boolean(url);
+
+        const item = document.createElement('li');
+        item.className = 'card' + (isLive ? '' : ' is-coming-soon');
+
+        const visual = document.createElement('span');
+        visual.className = 'logo-wrap';
+        if (game.logo) {
+          const img = document.createElement('img');
+          img.src = game.logo;
+          img.alt = '';
+          img.loading = 'lazy';
+          img.decoding = 'async';
+          visual.appendChild(img);
+        } else {
+          const ph = document.createElement('span');
+          ph.className = 'logo-placeholder';
+          ph.textContent = displayName;
+          visual.appendChild(ph);
+          const note = document.createElement('span');
+          note.className = 'logo-note';
+          note.textContent = t.logoToCome;
+          visual.appendChild(note);
+        }
+
+        const name = document.createElement('span');
+        name.className = 'game-name';
+        name.textContent = displayName;
+
+        if (!isLive) {
+          const badge = document.createElement('span');
+          badge.className = 'badge';
+          badge.textContent = t.comingSoon;
+          item.appendChild(visual);
+          item.appendChild(name);
+          item.appendChild(badge);
+          item.setAttribute('aria-label', t.comingSoonLabel(displayName));
+        } else {
+          const link = document.createElement('a');
+          link.className = 'card-link';
+          link.href = url;
+          link.target = '_blank';
+          link.rel = 'noopener';
+          link.setAttribute('aria-label', t.play(displayName));
+          link.appendChild(visual);
+          link.appendChild(name);
+          item.appendChild(link);
+        }
+        grid.appendChild(item);
       }
 
-      const name = document.createElement('span');
-      name.className = 'game-name';
-      name.textContent = game.name;
-
-      if (game.status === 'coming-soon') {
-        const badge = document.createElement('span');
-        badge.className = 'badge';
-        badge.textContent = 'Coming Soon';
-        item.appendChild(visual);
-        item.appendChild(name);
-        item.appendChild(badge);
-        item.setAttribute('aria-label', game.name + ' — Coming Soon');
-      } else {
-        const link = document.createElement('a');
-        link.className = 'card-link';
-        link.href = game.url;
-        link.target = '_blank';
-        link.rel = 'noopener';
-        link.setAttribute('aria-label', 'Play ' + game.name + ' (opens in new tab)');
-        link.appendChild(visual);
-        link.appendChild(name);
-        item.appendChild(link);
-      }
-      grid.appendChild(item);
+      try { localStorage.setItem('averys-games-lang', lang); } catch (e) {}
     }
+
+    function savedLang() {
+      try {
+        const v = localStorage.getItem('averys-games-lang');
+        if (v === 'fr' || v === 'en') return v;
+      } catch (e) {}
+      return 'en';
+    }
+
+    enBtn.addEventListener('click', () => render('en'));
+    frBtn.addEventListener('click', () => render('fr'));
+    render(savedLang());
   </script>
 </body>
 </html>
