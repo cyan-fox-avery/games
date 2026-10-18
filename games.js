@@ -27,28 +27,28 @@ const GAMES = [
   },
   {
     name: 'Tag Along',
-    name_fr: '', // French title to come.
+    name_fr: 'Sur la piste des requins',
     logo: 'assets/tag-along-logo.png',
     url: 'https://cyan-fox-avery.github.io/tag-along/',
     url_fr: '', // French version not out yet.
   },
   {
     name: 'Berry Delightful',
-    name_fr: '', // French title to come.
+    name_fr: 'Délices de fraises',
     logo: null, // Logo to come — do not use the AI exploration drafts as the final logo.
     url: '',
     url_fr: '',
   },
   {
     name: 'Fox & Found',
-    name_fr: '', // French title to come.
+    name_fr: 'Renards retrouvés',
     logo: null, // Logo to come — Fox & Found uses real photography, no AI imagery.
     url: '',
     url_fr: '',
   },
   {
     name: 'Snow War',
-    name_fr: '', // French title to come.
+    name_fr: 'Guerre de neige',
     logo: null, // Logo to come.
     url: '',
     url_fr: '',
