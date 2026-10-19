@@ -31,8 +31,8 @@ Live at https://cyan-fox-avery.github.io/games/
 
 ## Current status (checked 2026-10-15)
 
-- Rockhound — LIVE in English, linked. Coming Soon in French
-  (Cherche-cailloux). Logo still needed (no standalone logo file in its repo).
+- Rockhound — LIVE in English, linked. LIVE in French
+  (Cherche-cailloux), linked. Logo still needed (no standalone logo file in its repo).
 - Tag Along — LIVE in English, linked. Coming Soon in French.
   Logo in `assets/tag-along-logo.png`.
 - Berry Delightful — Coming Soon (both languages). Its repo has no playable

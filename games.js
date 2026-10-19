@@ -23,7 +23,7 @@ const GAMES = [
     name_fr: 'Cherche-cailloux',
     logo: null, // Logo to come — no standalone logo file in the Rockhound repo yet.
     url: 'https://cyan-fox-avery.github.io/rockhound/',
-    url_fr: '', // French version not out yet.
+    url_fr: 'https://cyan-fox-avery.github.io/cherche-cailloux/',
   },
   {
     name: 'Tag Along',
